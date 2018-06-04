@@ -170,6 +170,7 @@ class OldSoundRabbitMqExtension extends Extension
                 $this->container->setDefinition($producerServiceName, $definition);
                 if (null !== $producer['service_alias']) {
                     $this->container->setAlias($producer['service_alias'], $producerServiceName);
+                    $this->container->getAlias($producer['service_alias'])->setPublic(true);
                 }
             }
         } else {
