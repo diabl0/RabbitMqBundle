@@ -263,8 +263,8 @@ class OldSoundRabbitMqExtension extends Extension
             }
 
             $definition = new Definition('%old_sound_rabbit_mq.multi_consumer.class%');
-            $definition->setPublic(true);
             $definition
+                ->setPublic(true)
                 ->addTag('old_sound_rabbit_mq.base_amqp')
                 ->addTag('old_sound_rabbit_mq.multi_consumer')
                 ->addMethodCall('setExchangeOptions', array($this->normalizeArgumentKeys($consumer['exchange_options'])))
@@ -338,6 +338,7 @@ class OldSoundRabbitMqExtension extends Extension
 
             $definition = new Definition('%old_sound_rabbit_mq.dynamic_consumer.class%');
             $definition
+                ->setPublic(true)
                 ->addTag('old_sound_rabbit_mq.base_amqp')
                 ->addTag('old_sound_rabbit_mq.consumer')
                 ->addTag('old_sound_rabbit_mq.dynamic_consumer')
@@ -393,6 +394,7 @@ class OldSoundRabbitMqExtension extends Extension
             }
 
             $definition
+                ->setPublic(true)
                 ->addTag('old_sound_rabbit_mq.base_amqp')
                 ->addTag('old_sound_rabbit_mq.batch_consumer')
                 ->addMethodCall('setTimeoutWait', array($consumer['timeout_wait']))
@@ -413,6 +415,13 @@ class OldSoundRabbitMqExtension extends Extension
 
             if (isset($consumer['idle_timeout'])) {
                 $definition->addMethodCall('setIdleTimeout', array($consumer['idle_timeout']));
+            }
+
+            if (isset($consumer['graceful_max_execution'])) {
+                $definition->addMethodCall(
+                    'setGracefulMaxExecutionDateTimeFromSecondsInTheFuture',
+                    array($consumer['graceful_max_execution']['timeout'])
+                );
             }
 
             if (!$consumer['auto_setup_fabric']) {
@@ -439,8 +448,9 @@ class OldSoundRabbitMqExtension extends Extension
     protected function loadAnonConsumers()
     {
         foreach ($this->config['anon_consumers'] as $key => $anon) {
-            $definition = new Definition('%old_sound_rabbit_mq.anon_consumer.class%');
+            $definition = new Definition('%old_sound_rabbit_mq.anon_consumer.class%');     
             $definition
+                ->setPublic(true)
                 ->addTag('old_sound_rabbit_mq.base_amqp')
                 ->addTag('old_sound_rabbit_mq.anon_consumer')
                 ->addMethodCall('setExchangeOptions', array($this->normalizeArgumentKeys($anon['exchange_options'])))
@@ -538,6 +548,7 @@ class OldSoundRabbitMqExtension extends Extension
         foreach ($this->config['rpc_servers'] as $key => $server) {
             $definition = new Definition('%old_sound_rabbit_mq.rpc_server.class%');
             $definition
+                ->setPublic(true)
                 ->addTag('old_sound_rabbit_mq.base_amqp')
                 ->addTag('old_sound_rabbit_mq.rpc_server')
                 ->addMethodCall('initServer', array($key))
